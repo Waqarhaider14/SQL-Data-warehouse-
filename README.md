@@ -4,38 +4,60 @@ A PostgreSQL data warehouse of global disaster events from 2000 to 2025.
 
 Six disaster types (drought, earthquake, flood, wildfire, volcano eruption, tropical cyclone) are stored in separate source tables. They are combined into one **fact table**, which connects to **dimension tables**.
 
+This repo also holds my SQL practice files (aggregation, joins, window functions, CTEs, CASE WHEN, filtering).
+
 ## Structure
 
 - **`src`** – 6 raw source tables, one per disaster type
 - **`dw`** – 12 warehouse tables:
   - 1 fact table: `fact_disaster_event`
   - 5 dimensions: `dim_date`, `dim_location`, `dim_event_type`, `dim_alert`, `dim_source`
-  - 6 subtype tables: one per disaster type, for details only that type has (e.g. `dim_flood`)
+  - 6 special dimension tables, one per disaster type, for details only that type has: `dim_drought`, `dim_earthquake`, `dim_flood`, `dim_wild_fire`, `dim_volcano`, `dim_tropical_cyclone`
 
-## How it works
+## Files and load order
 
-1. Create the source tables (`Disaster Source Tables Creation Queries.sql`) and import the data.
-2. Create the warehouse tables (`Disaster Dimensions-Fact Tables Creation Queries.sql`).
-3. Load the fact table (`Disaster Fact table Insertion.sql`). It combines the 6 source tables with `UNION ALL`, joins them to the dimensions, and groups by event.
-4. Load the subtype tables (`Disaster specific dimensions insertion.sql`).
+| # | File | What it does |
+|---|------|--------------|
+| 1 | `Disaster Source Tables Creation Queries.sql` | Creates the 6 `src` tables |
+| 2 | *(CSV import in pgAdmin)* | Loads the data into the `src` tables |
+| 3 | `Disaster Dimensions-Fact Tables Creation Queries.sql` | Creates the 5 core dimensions and the fact table |
+| 4 | `Special Dimension Creation.sql` | Creates the 6 special dimension tables |
+| 5 | `Disaster Fact table Insertion.sql` | Fills the fact table |
+| 6 | `Disaster specific dimensions insertion.sql` | Fills the special dimension tables |
+| – | `Disaster Business Questions.sql` | Business queries (counts by type, country, year; flood deaths) |
 
-## Files
+Other files:
 
-- `Disaster *.sql` – table creation and data loading scripts
-- `Disaster Business Questions.sql` – business queries (counts by type, country, year; flood deaths)
-- `SQL concepts quries/` – practice queries (filtering, aggregation, CASE, CTE, joins, window functions)
 - `New ERD Disaster Project.png` – the data model diagram
+- `ERD *`, `*.pgerd`, `pg admin *.png`, `Untitled.png` – ERD and pgAdmin screenshots
+
+## How the fact table is built
+
+The fact table is filled from the 6 source tables:
+
+1. `UNION ALL` stacks the 6 source tables into one list.
+2. The list is joined to the dimension tables to get their keys.
+3. `GROUP BY` the event gives one row per event.
+4. `ON CONFLICT DO NOTHING` skips events that are already loaded, so the script can be run again safely.
+
+## Practice files
+
+These are my practice queries, stored in `SQL concepts quries/`:
+
+| File | Topics |
+|------|--------|
+| `Basic filtering and selection.sql` | `WHERE`, `LIKE`, `BETWEEN`, `IS NULL` |
+| `Aggregation Questions.sql` | `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `GROUP BY`, `HAVING`, percent of total with `SUM() OVER ()` |
+| `Case when Questions.sql` | `CASE WHEN` categories and conditional counts |
+| `CTE's Practice.sql` | `WITH` queries, single and chained CTEs |
+| `Join types Right Left Outer.sql` | `INNER`, `LEFT`, and `RIGHT` joins, finding missing rows |
+| `window functions disaster data.sql` | `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `LAG`, `LEAD`, `SUM() OVER` |
+
+Root practice file:
+
+- `Window Functions using employee table.sql` – second-highest salary and duplicate-department queries on an `employee` table (not part of the disaster warehouse)
 
 ## Known gaps
 
-- The scripts for loading the 5 dimension tables are not in this repo.
+- The scripts for loading the 5 core dimension tables (`dim_date`, `dim_location`, `dim_event_type`, `dim_alert`, `dim_source`) are not in this repo.
 - The CSV import into the source tables is done manually in pgAdmin.
-
-## Interview quick answers
-
-- **What is a fact table?** It stores the measurable numbers about each event, such as severity, deaths, and population affected.
-- **What is a dimension table?** It stores descriptive details used to filter and group, such as country, date, and event type.
-- **What is a star schema?** One fact table in the middle, with dimension tables connected around it. This project follows that design.
-- **Why separate subtype tables?** Each disaster type has its own details. Keeping them in separate tables avoids many empty columns in the fact table.
-- **Why `UNION ALL`?** It stacks the 6 source tables into one list, so they can be loaded into a single fact table.
-- **Why `ON CONFLICT DO NOTHING`?** It skips events that are already loaded, so the load can be run again safely.
