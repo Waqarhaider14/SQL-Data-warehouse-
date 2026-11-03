@@ -187,7 +187,6 @@ Run the scripts in this order:
 | `CTE's Practice.sql`                  | Single and chained CTEs, CTE used as a scalar subquery              |
 | `Join types Right Left Outer.sql`     | `LEFT JOIN` to find countries with zero disasters and alert gaps    |
 | `window functions disaster data.sql`  | `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `LAG`, `LEAD`, running totals   |
-| `Find Duplicates in SQL.sql`          | Finding and deleting duplicates with `ROW_NUMBER` (references an unrelated `dw.dimtruck` table) |
 
 ### Other practice files (root)
 
@@ -250,7 +249,7 @@ These came from reviewing the SQL files against the ERD and against each other.
 5. **ERD and DDL disagree.** The ERD places `effected_area_km2` in `dim_drought`. The DDL and fact load put it in `fact_disaster_event`. The DDL is the authority here.
 6. **Inconsistent date role.** The "Disasters by year" business query uses `end_date_id`, while the concept queries use `start_date_id`. Pick one and document it.
 7. **Event type codes are assumed.** The flood query filters on `event_type = 'FL'`, which matches GDACS-style codes. Confirm the codes in `dw.dim_event_type`.
-8. **Unrelated files in the project.** `Find Duplicates in SQL.sql` refers to `dw.dimtruck`, which does not exist in this warehouse. The employee-table practice file is not connected to the disaster model.
+8. **Unrelated files in the project.** The employee-table practice file in the root is not connected to the disaster model.
 9. **Small query issues in practice files.**
    - The second-highest-salary query in `Window Functions using employee table.sql` uses `DENSE_RANK() OVER (ORDER BY salary)`, which ranks ascending. That returns the second-lowest salary. Use `DESC`.
    - `Basic filtering and selection.sql` says "High" alert level but filters on `'Red'`.
