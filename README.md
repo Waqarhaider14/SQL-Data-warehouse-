@@ -58,6 +58,4 @@ Root practice file:
 - `Window Functions using employee table.sql` – second-highest salary and duplicate-department queries on an `employee` table (not part of the disaster warehouse)
 
 ## Known gaps
-
-- The scripts for loading the 5 core dimension tables (`dim_date`, `dim_location`, `dim_event_type`, `dim_alert`, `dim_source`) are not in this repo.
 - The CSV import into the source tables is done manually in pgAdmin.
