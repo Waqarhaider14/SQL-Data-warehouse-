@@ -9,7 +9,7 @@ INSERT INTO dw.fact_disaster_event (
     severity,
     duration_days,
     population_effected,
-    death,
+    deaths,
     displaced,
     effected_area_km2
 )
@@ -193,4 +193,4 @@ GROUP BY
     sd.date_id,
     ed.date_id
 	
-ON CONFLICT (disaster_event_id) DO NOTHING;
+ON CONFLICT (disaster_event_id) DO NOTHING; 
