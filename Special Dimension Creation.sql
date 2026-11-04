@@ -1,6 +1,7 @@
 CREATE TABLE dw.dim_drought (
     disaster_event_id   TEXT PRIMARY KEY,
     drought_type        TEXT,
+    effected_area_km2   INT,
 
     FOREIGN KEY (disaster_event_id)
         REFERENCES dw.fact_disaster_event(disaster_event_id)
@@ -18,6 +19,8 @@ CREATE TABLE dw.dim_earthquake (
 CREATE TABLE dw.dim_flood (
     disaster_event_id   TEXT PRIMARY KEY,
     gdacs_id            TEXT,
+    death               INT,
+    displaced           INT,
 
     FOREIGN KEY (disaster_event_id)
         REFERENCES dw.fact_disaster_event(disaster_event_id)

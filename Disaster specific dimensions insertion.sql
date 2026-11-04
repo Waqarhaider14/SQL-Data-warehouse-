@@ -1,10 +1,12 @@
 INSERT INTO dw.dim_drought (
     disaster_event_id,
-    drought_type
+    drought_type,
+    effected_area_km2
 )
 SELECT DISTINCT
     d.disaster_event_id,
-    d.drought_type
+    d.drought_type,
+    d.effected_area_km2
 FROM src.drought d
 JOIN dw.fact_disaster_event fd
 ON d.disaster_event_id = fd.disaster_event_id;
@@ -54,3 +56,18 @@ SELECT DISTINCT
 FROM src.wild_fire wf
 JOIN dw.fact_disaster_event fd
 ON wf.disaster_event_id = fd.disaster_event_id;
+
+insert into dw.dim_flood (
+    disaster_event_id,
+    gdacs_id,
+    death,
+    displaced
+)
+SELECT DISTINCT
+    f.disaster_event_id,
+    f.gdacs_id,
+    f.death,
+    f.displaced
+FROM src.flood f
+JOIN dw.fact_disaster_event fd  
+ON f.disaster_event_id = fd.disaster_event_id;

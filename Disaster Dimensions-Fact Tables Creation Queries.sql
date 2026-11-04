@@ -54,9 +54,6 @@ CREATE TABLE dw.fact_disaster_event (
     severity                    DECIMAL,
     duration_days               INT,
     population_effected         INT,
-    death                       INT,
-    displaced                   INT,
-    effected_area_km2           INT,
 
     UNIQUE (disaster_event_id)
 );

@@ -8,10 +8,7 @@ INSERT INTO dw.fact_disaster_event (
     end_date_id,
     severity,
     duration_days,
-    population_effected,
-    death,
-    displaced,
-    effected_area_km2
+    population_effected
 )
 SELECT
     s.disaster_event_id,
@@ -26,10 +23,7 @@ SELECT
 
     MAX(s.severity)                 AS severity,
     MAX(s.duration_days)::INT      AS duration_days,
-    SUM(s.population_effected)     AS population_effected,
-    SUM(s.death)                   AS death,
-    SUM(s.displaced)               AS displaced,
-    SUM(s.effected_area_km2)       AS effected_area_km2
+    SUM(s.population_effected)     AS population_effected
 
 FROM (
 
@@ -48,10 +42,7 @@ SELECT
     to_date,
     severity,
     duration_days::INT            AS duration_days,
-    NULL::INT                     AS population_effected,
-    NULL::INT                     AS death,
-    NULL::INT                     AS displaced,
-    effected_area_km2::INT        AS effected_area_km2
+    NULL::INT                     AS population_effected
 FROM src.drought
 
 UNION ALL
@@ -69,10 +60,7 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    population_effected,
-    NULL::INT                     AS death,
-    NULL::INT                     AS displaced,
-    NULL:: INT                    AS effected_area_km2
+    population_effected
 FROM src.earthquake
 
 UNION ALL
@@ -90,10 +78,7 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    NULL::INT                     AS population_effected,
-    death,
-    displaced,
-    NULL:: INT                    AS effected_area_km2
+    NULL::INT                     AS population_effected
 FROM src.flood
 
 UNION ALL
@@ -111,10 +96,7 @@ SELECT
     to_date,
     severity,
     duration_days,
-    population_effected,
-    NULL::INT                     AS death,
-    NULL::INT                     AS displaced,
-    NULL:: INT                    AS effected_area_km2
+    population_effected
 FROM src.wild_fire
 
 UNION ALL
@@ -132,10 +114,7 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    population_effected,
-    NULL::INT                     AS death,
-    NULL::INT                     AS displaced,
-    NULL:: INT                    AS effected_area_km2
+    population_effected
 FROM src.volcano_eruption
 
 UNION ALL
@@ -153,10 +132,7 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    NULL::INT                     AS population_effected,
-    NULL::INT                     AS death,
-    NULL::INT                     AS displaced,
-    NULL:: INT                    AS effected_area_km2
+    NULL::INT                     AS population_effected
 FROM src.tropical_cyclone
 
 
