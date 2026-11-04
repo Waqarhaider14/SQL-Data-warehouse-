@@ -9,7 +9,7 @@ INSERT INTO dw.fact_disaster_event (
     severity,
     duration_days,
     population_effected,
-    deaths,
+    death,
     displaced,
     effected_area_km2
 )
