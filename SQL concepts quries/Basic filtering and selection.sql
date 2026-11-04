@@ -24,7 +24,7 @@ where alert_level = 'Red'
 
 -- Find all disaster events that lasted more than 200 days but less than 500 days, and also affected more than 100,000 people.
 select disaster_event_id from dw.fact_disaster_event
-where duration_days between 200 and 500 AND population_effected > 100000;
+where duration_days > 200 and duration_days < 500 AND population_effected > 100000;
 
 -- Retrieve all disaster events where the duration is greater than the average duration of all disasters.
 select disaster_event_id from dw.fact_disaster_event
@@ -32,7 +32,7 @@ where duration_days > ( select AVG(duration_days) from dw.fact_disaster_event)
 
 -- Find all disaster events where the population affected is among the top 5 highest values.
 select disaster_event_id from dw.fact_disaster_event
-where population_effected in (select population_effected from dw.fact_disaster_event order by population_effected desc limit 5)
+where population_effected in (select population_effected from dw.fact_disaster_event order by population_effected desc nulls last limit 5)
 
 -- Find all disaster events where the duration is greater than 100 days and the severity is not null, and sort them by severity in descending order.
 select disaster_event_id from dw.fact_disaster_event

@@ -85,11 +85,11 @@ on df.event_type_id = de.event_type_id
 group by event_type
 
 -- Find the average population affected per disaster type, excluding very small events (e.g., less than 1000 people).
-select de.event_type, sum(df.population_effected)
+select de.event_type, round(avg(df.population_effected),2) as avg_population
 from dw.fact_disaster_event df join dw.dim_event_type de
 on df.event_type_id = de.event_type_id 
-group by de.event_type 
-having sum(df.population_effected) > 1000
+where df.population_effected >= 1000
+group by de.event_type
 
 -- Count how many disasters fall into each alert level, but only show levels with more than 200 events.
 select da.alert_level, count(df.disaster_event_id)

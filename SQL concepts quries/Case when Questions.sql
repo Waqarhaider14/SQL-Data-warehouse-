@@ -9,7 +9,8 @@ Then count how many disasters fall into each category.*/
 select 
 	case when duration_days <= 100 then 'short'
 		 when duration_days between 101 and 300 then 'Medium'
-		 else 'long'
+		 when duration_days > 300 then 'long'
+		 else 'Unknown'
 		 end as duration_category,
 		 count(*)
 	from dw.fact_disaster_event
@@ -25,7 +26,8 @@ Then retrieve all disaster events along with this new category.*/
 select disaster_event_id,
 		case when population_effected > 500000 then 'High Impact' 
 			 when population_effected between 100000 and 500000 then 'Moderate Impact'
-			 else 'Low Impact'
+			 when population_effected < 100000 then 'Low Impact'
+			 else 'Unknown'
 			 end as Population_category
 		from dw.fact_disaster_event
 

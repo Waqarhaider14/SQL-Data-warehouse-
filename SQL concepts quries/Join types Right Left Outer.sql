@@ -47,12 +47,17 @@ order by round(count(disaster_event_id) * 100.0 / sum(count(disaster_event_id)) 
 -- RIGHT JOIN
 
 --Retrieve all disaster types and show the top 3 highest duration disasters per type, including types with no disasters.
-select de.event_type, df.disaster_event_id, df.duration_days
-from dw.fact_disaster_event df RIGHT JOIN dw.dim_event_type de
-on df.event_type_id = de.event_type_id
-where df.duration_days is not null
-order by df.duration_days desc
-limit 3;
+with ranked_events as (
+		select de.event_type, df.disaster_event_id, df.duration_days,
+				row_number() over (partition by de.event_type order by df.duration_days desc) as rn
+		from dw.fact_disaster_event df RIGHT JOIN dw.dim_event_type de
+		on df.event_type_id = de.event_type_id
+		and df.duration_days is not null
+		)
+select event_type, disaster_event_id, duration_days
+from ranked_events
+where rn <= 3
+order by event_type, rn;
 
 --Find mismatched data between disaster events and location records (i.e., events without location and locations without events), and count them separately.
 

@@ -18,6 +18,7 @@ with disaster_duration as (
 			where duration_days > 100
 			)
 select * from disaster_duration
+order by duration_days desc
 
 /*Create a CTE that calculates the average population affected across all disasters.
 Then use that CTE to retrieve disaster events where the population affected is greater than this average.*/

@@ -28,7 +28,7 @@ order by dd.year
 
 -- For each disaster event, show the population affected by the previous disaster event when events are ordered by their start date.
 
-select df.disaster_event_id, dd.year, df.population_effected, lag(df.population_effected) over (order by dd.year) as previous_year_population
+select df.disaster_event_id, dd.full_date, df.population_effected, lag(df.population_effected) over (order by dd.full_date, df.fact_id) as previous_event_population
 from dw.fact_disaster_event df inner join dw.dim_date dd
 on df.start_date_id = dd.date_id
 where df.population_effected is not null
@@ -41,7 +41,7 @@ where df.population_effected is not null
 group by dd.year;
 
 -- For each disaster event, show the population affected by the next disaster event when events are ordered by their start date.
-select df.disaster_event_id, dd.year, df.population_effected, lead(df.population_effected) over (order by dd.year) as post_year_population
+select df.disaster_event_id, dd.full_date, df.population_effected, lead(df.population_effected) over (order by dd.full_date, df.fact_id) as next_event_population
 from dw.fact_disaster_event df inner join dw.dim_date dd
 on df.start_date_id = dd.date_id
 where df.population_effected is not null
@@ -66,7 +66,7 @@ on df.location_id = dl.location_id
 where df.duration_days is not null
 
 -- For each country, show the population affected by the previous disaster in that country, ordering disasters by their start date.
-select dl.country_location_name, dd.year, df.population_effected, LAG(df.population_effected) over (partition by dl.country_location_name order by dd.year) as rank_wise_effected
+select dl.country_location_name, dd.full_date, df.population_effected, LAG(df.population_effected) over (partition by dl.country_location_name order by dd.full_date, df.fact_id) as previous_event_population
 from dw.fact_disaster_event df inner join dw.dim_location dl
 	on df.location_id = dl.location_id
 INNER JOIN dw.dim_date dd
