@@ -192,4 +192,4 @@ GROUP BY
     sd.date_id,
     ed.date_id
 	
-ON CONFLICT (disaster_event_id) DO NOTHING; 
+ON CONFLICT (disaster_event_id, location_id) DO NOTHING; 
