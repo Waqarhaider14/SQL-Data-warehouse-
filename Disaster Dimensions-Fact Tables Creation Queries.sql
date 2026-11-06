@@ -55,6 +55,6 @@ CREATE TABLE dw.fact_disaster_event (
     duration_days               INT,
     population_effected         INT,
 
-    UNIQUE (disaster_event_id)
+    UNIQUE (disaster_event_id, location_id)
 );
 

@@ -42,7 +42,9 @@ SELECT
     to_date,
     severity,
     duration_days::INT            AS duration_days,
-    NULL::INT                     AS population_effected
+    NULL::INT                     AS population_effected,
+    impact_level,
+    NULL::TEXT AS impact_category
 FROM src.drought
 
 UNION ALL
@@ -60,7 +62,9 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    population_effected
+    population_effected,
+    NULL::TEXT AS impact_level,
+    impact_category
 FROM src.earthquake
 
 UNION ALL
@@ -78,7 +82,9 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    NULL::INT                     AS population_effected
+    NULL::INT                     AS population_effected,
+    NULL::TEXT AS impact_level,
+    NULL::TEXT AS impact_category
 FROM src.flood
 
 UNION ALL
@@ -96,7 +102,9 @@ SELECT
     to_date,
     severity,
     duration_days,
-    population_effected
+    population_effected,
+    NULL::TEXT AS impact_level,
+    NULL::TEXT AS impact_category
 FROM src.wild_fire
 
 UNION ALL
@@ -114,7 +122,9 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    population_effected
+    population_effected,
+    NULL::TEXT AS impact_level,
+    NULL::TEXT AS impact_category
 FROM src.volcano_eruption
 
 UNION ALL
@@ -132,7 +142,9 @@ SELECT
     to_date,
     severity,
     NULL::INT 					  AS duration_days,
-    NULL::INT                     AS population_effected
+    NULL::INT                     AS population_effected,
+    NULL::TEXT AS impact_level,
+    NULL::TEXT AS impact_category
 FROM src.tropical_cyclone
 
 
@@ -148,11 +160,22 @@ JOIN dw.dim_location l
 JOIN dw.dim_source so
     ON s.source_system = so.source_system
 
-JOIN dw.dim_alert a
+JOIN (
+    SELECT MIN(alert_id) AS alert_id,
+           alert_level, alert_score,
+           episode_alert_level, episode_alert_score,
+           impact_level, impact_category
+    FROM dw.dim_alert
+    GROUP BY alert_level, alert_score,
+             episode_alert_level, episode_alert_score,
+             impact_level, impact_category
+) a
     ON s.alert_level = a.alert_level
    AND s.alert_score = a.alert_score
    AND s.episode_alert_level = a.episode_alert_level
    AND s.episode_alert_score = a.episode_alert_score
+   AND s.impact_level IS NOT DISTINCT FROM a.impact_level
+   AND s.impact_category IS NOT DISTINCT FROM a.impact_category
 
 JOIN dw.dim_date sd
     ON s.from_date = sd.full_date
